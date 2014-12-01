@@ -89,7 +89,7 @@ PinMode("A1", "PWM")
 AnalogWrite("A1", 100)
 ```
 
-**DigitalRead**
+**DigitalRead(pin)**
 
 Example:
 ```go
@@ -97,7 +97,7 @@ PinMode("D1", "INPUT")
 DigitalRead("D1")
 ```
 
-**AnalogRead**
+**AnalogRead(pin)**
 
 Example:
 ```go
@@ -105,9 +105,9 @@ PinMode("A1", "INPUT")
 AnalogRead("A1")
 ```
 
-**ServoWrite**
+**ServoWrite(pin, deg)**
 
-Set value between 0 to 180.
+Set deg between 0 to 180.
 
 Available on D0, D1, A0, A1, A4, A5, A6, A7.
 
