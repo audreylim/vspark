@@ -55,12 +55,12 @@ func main() {
 **PinMode(pin, mode)**
 
 Modes:
-- INPUT:           0 (DigitalRead, AnalogRead)
-- OUTPUT:          1 (DigitalWrite)
-- PWM:             1 (AnalogWrite)
-- INPUT_PULLUP:    2
-- INPUT_PULLDOWN:  3
-- SERVO:           4 (ServoWrite)
+- INPUT (DigitalRead, AnalogRead)
+- OUTPUT (DigitalWrite)
+- PWM (AnalogWrite)
+- INPUT_PULLUP
+- INPUT_PULLDOWN  
+- SERVO (ServoWrite)
 
 Example: 
 ```go
