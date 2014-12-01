@@ -44,7 +44,7 @@ func main() {
 
 Set StaticIP if you want to assign a static IP address, or just use `PingSpark()` to get the IP address of the Spark Core.
 
-Eg.
+Example:
 ```go 
 func main() {
   vspark.StaticIP = "your static IP address and port number"
@@ -62,7 +62,7 @@ Modes:
 - INPUT_PULLDOWN:  3
 - SERVO:           4 (ServoWrite)
 
-Eg. 
+Example: 
 ```go
 PinMode("D7", "OUTPUT")
 ```
@@ -71,7 +71,7 @@ PinMode("D7", "OUTPUT")
 
 Set 1 for maximum 3.3V voltage ("HIGH") or 0 to turn it off ("LOW").
 
-Eg. 
+Example: 
 ```go
 PinMode("D7", "OUTPUT")
 DigitalWrite("D7", 1)
@@ -83,7 +83,7 @@ Available on D0, D1, A0, A1, A4, A5, A6, A7.
 
 Set value from 0 to 255.
 
-Eg.
+Example:
 ```go
 PinMode("A1", "PWM")
 AnalogWrite("A1", 100)
@@ -91,7 +91,7 @@ AnalogWrite("A1", 100)
 
 **DigitalRead**
 
-Eg.
+Example:
 ```go
 PinMode("D1", "INPUT")
 DigitalRead("D1")
@@ -99,10 +99,10 @@ DigitalRead("D1")
 
 **AnalogRead**
 
-Eg.
+Example:
 ```go
-PinMode("D1", "INPUT")
-AnalogRead("D1")
+PinMode("A1", "INPUT")
+AnalogRead("A1")
 ```
 
 **ServoWrite**
@@ -111,7 +111,7 @@ Set value between 0 to 180.
 
 Available on D0, D1, A0, A1, A4, A5, A6, A7.
 
-Eg.
+Example:
 ```go
 PinMode("D1", "SERVO")
 ServoWrite("D1", 180)
