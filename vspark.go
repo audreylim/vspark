@@ -179,7 +179,8 @@ func readBytes() uint16 {
 }
 
 func DigitalRead(pin string) uint16 {
-	// NOTE: 3rd byte (1 or 0 only) needed for initial Digital and Analog Read to work, but should be removed afterwards. Not documented.
+	// FIXME: https://github.com/voodootikigod/voodoospark/issues/36
+	// 3rd byte (1 or 0 only) needed for initial Digital and Analog Read to work, but should be removed afterwards. Not documented.
 	_, err := conn.Write([]byte{0x03, n[pin], 1})
 	if err != nil {
 		fmt.Println(err)
