@@ -81,7 +81,7 @@ func PingSpark() {
 
 // Convert Pin number to its byte represetation.
 var n = map[string]byte{
-	"D0": 0, "A0", 0,
+	"D0": 0, "A0": 0,
 	"D1": 1, "A1": 1,
 	"D2": 2, "A2": 2,
 	"D3": 3, "A3": 3,
