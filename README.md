@@ -1,12 +1,12 @@
 #Vspark
 
-Vspark is a Go package that lets you write Go programs that interact with Spark devices.
+Vspark is a Go package that lets you write Go programs that interact with [Spark devices] (https://www.spark.io/).
 
 ##Getting Started
 
 Load the [Voodoospark firmware] (https://github.com/voodootikigod/voodoospark) onto your Spark device. 
 
-Add the following to your dot file:
+Set these environment variables on the host machine.
 
 ```go
 export SPARK_TOKEN="your spark token"
@@ -42,7 +42,7 @@ func main() {
 
 **StaticIP and PingSpark()**
 
-Set StaticIP if you want to assign a static IP address, or just use `PingSpark()` to get the IP address of the Spark Core.
+If you know the IP address of the core and want to bypass the Spark Cloud, you can directly set the IP address. If the IP address is not set, `PingSpark()` will retrieve it from the Spark Cloud.
 
 Example:
 ```go 
