@@ -107,10 +107,10 @@ var availablePins = []string{
 func PinMode(pin, mode string) {
 	m := map[string]byte{
 		"INPUT":  0,
-		"OUTPUT": 1, "PWM": 1, // Use "OUTPUT" for DigitalWrite, "PWM" for AnalogWrite. TODO: Implement coerced mode?
-		"INPUT_PULLUP":   2,
-		"INPUT_PULLDOWN": 3,
-		"SERVO":          4,
+		"OUTPUT": 1,
+		"ANALOG": 2,
+		"PWM":    3,
+		"SERVO":  4,
 	}
 
 	if string(pin[0]) == "A" {
@@ -180,9 +180,7 @@ func readBytes() uint16 {
 }
 
 func DigitalRead(pin string) uint16 {
-	// FIXME: https://github.com/voodootikigod/voodoospark/issues/36
-	// 3rd byte (1 or 0 only) needed for initial Digital and Analog Read to work, but should be removed afterwards. Not documented.
-	_, err := conn.Write([]byte{0x03, n[pin], 1})
+	_, err := conn.Write([]byte{0x03, n[pin]})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -190,7 +188,7 @@ func DigitalRead(pin string) uint16 {
 }
 
 func AnalogRead(pin string) uint16 {
-	_, err := conn.Write([]byte{0x04, n[pin], 1})
+	_, err := conn.Write([]byte{0x04, n[pin]})
 	if err != nil {
 		fmt.Println(err)
 	}

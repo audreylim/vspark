@@ -4,7 +4,7 @@ Vspark is a Go package that lets you write Go programs that interact with Spark 
 
 ##Getting Started
 
-Load the [Voodoospark firmware] (https://github.com/voodootikigod/voodoospark) (v 2.4.0)  onto your Spark device. 
+Load the [Voodoospark firmware] (https://github.com/voodootikigod/voodoospark) onto your Spark device. 
 
 Add the following to your dot file:
 
@@ -55,12 +55,11 @@ func main() {
 **PinMode(pin, mode)**
 
 Modes:
-- INPUT => DigitalRead, AnalogRead
-- OUTPUT => DigitalWrite
-- PWM => AnalogWrite
-- INPUT_PULLUP
-- INPUT_PULLDOWN  
-- SERVO => ServoWrite
+- INPUT => DigitalRead (INPUT_PULLDOWN)
+- OUTPUT => DigitalWrite (OUTPUT)
+- ANALOG => AnalogRead (INPUT)
+- PWM => AnalogWrite (OUTPUT)
+- SERVO => ServoWrite (OUTPUT)
 
 Example: 
 ```go
@@ -101,7 +100,7 @@ DigitalRead("D1")
 
 Example:
 ```go
-PinMode("A1", "INPUT")
+PinMode("A1", "ANALOG")
 AnalogRead("A1")
 ```
 
