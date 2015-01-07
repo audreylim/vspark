@@ -1,19 +1,34 @@
 package main
 
 import (
+	"fmt"
 	"github.com/audreylim/vspark"
+	"log"
 	"time"
 )
 
 func main() {
-	vspark.PingSpark()
-	vspark.PinMode("D7", "OUTPUT")
+	err := vspark.PingSpark()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = vspark.PinMode("D7", "OUTPUT")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	for {
-		vspark.DigitalWrite("D7", 1)
+		writeErr := vspark.DigitalWrite("D7", 1)
+		if err != nil {
+			fmt.Println(writeErr)
+		}
 		time.Sleep(1000 * time.Millisecond)
 
-		vspark.DigitalWrite("D7", 0)
+		writeErr = vspark.DigitalWrite("D7", 0)
+		if err != nil {
+			fmt.Println(writeErr)
+		}
 		time.Sleep(1000 * time.Millisecond)
 	}
 }

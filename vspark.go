@@ -2,9 +2,9 @@ package vspark
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -17,7 +17,7 @@ import (
 var conn *net.TCPConn
 var StaticIP string
 
-func PingSpark() {
+func PingSpark() error {
 	// Get Spark Core IP Address.
 	var sparkIP string
 
@@ -33,21 +33,18 @@ func PingSpark() {
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", reqUrl, nil)
 		if err != nil {
-			log.Fatal("NewRequest: ", err)
-			return
+			return err
 		}
 
 		resp, requestErr := client.Do(req)
 		if requestErr != nil {
-			log.Fatal("Do: ", requestErr)
-			return
+			return requestErr
 		}
 		defer resp.Body.Close()
 
 		body, dataReadErr := ioutil.ReadAll(resp.Body)
 		if dataReadErr != nil {
-			log.Fatal("ReadAll: ", dataReadErr)
-			return
+			return dataReadErr
 		}
 
 		type endpoint struct {
@@ -57,7 +54,7 @@ func PingSpark() {
 		var r endpoint
 		err = json.Unmarshal(body, &r)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		sparkIP = r.Result
@@ -66,13 +63,15 @@ func PingSpark() {
 	// Ping Spark with TCP.
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", sparkIP)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	conn, err = net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
 //
@@ -104,7 +103,7 @@ var availablePins = []string{
 	"D1",
 }
 
-func PinMode(pin, mode string) {
+func PinMode(pin, mode string) error {
 	m := map[string]byte{
 		"INPUT":  0,
 		"OUTPUT": 1,
@@ -122,44 +121,48 @@ func PinMode(pin, mode string) {
 			if p == pin {
 				_, err := conn.Write([]byte{0x00, n[pin], m[mode]})
 				if err != nil {
-					fmt.Println(err)
+					return err
 				}
-				return
+				return nil
 			}
 		}
-		fmt.Printf("%s is not available on %s.\n", mode, pin)
-		return
+
+		return errors.New(fmt.Sprintf("%s is not available on %s.\n", mode, pin))
 	}
 
 	_, err := conn.Write([]byte{0x00, n[pin], m[mode]})
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+
+	return nil
 }
 
-func DigitalWrite(pin string, value byte) {
+func DigitalWrite(pin string, value byte) error {
 	_, err := conn.Write([]byte{0x01, n[pin], value})
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+
+	return nil
 }
 
-func AnalogWrite(pin string, value byte) {
+func AnalogWrite(pin string, value byte) error {
 	for _, p := range availablePins {
 		if p == pin {
 			_, err := conn.Write([]byte{0x02, n[pin], value})
 			if err != nil {
-				fmt.Println(err)
+				return err
 			}
-			return
+			return nil
 		}
 	}
 
-	fmt.Printf("PWM is not available on %s.\n", pin)
+	return errors.New(fmt.Sprintf("PWM is not available on %s.\n", pin))
 }
 
 // Read bytes sent by Voodoo.
-func readBytes() uint16 {
+func readBytes() (uint16, error) {
 	a := [][]byte{}
 
 	// Digital and Analog read actions on Voodoo return 4 bytes: action, pin, lsb, msb.
@@ -168,7 +171,7 @@ func readBytes() uint16 {
 
 		_, err := conn.Read(b)
 		if err != nil {
-			fmt.Println(err)
+			return 0, err
 		}
 		a = append(a, b)
 	}
@@ -176,28 +179,39 @@ func readBytes() uint16 {
 	// Join 7-bit lsb, msb.
 	lsb16 := uint16(a[2][0])
 	msb16 := uint16(a[3][0])
-	return lsb16 | msb16<<7
+	return lsb16 | msb16<<7, nil
 }
 
-func DigitalRead(pin string) uint16 {
+func DigitalRead(pin string) (uint16, error) {
 	_, err := conn.Write([]byte{0x03, n[pin]})
 	if err != nil {
-		fmt.Println(err)
+		return 0, err
 	}
-	return readBytes()
+
+	val, err := readBytes()
+	if err != nil {
+		return 0, err
+	}
+
+	return val, nil
 }
 
-func AnalogRead(pin string) uint16 {
+func AnalogRead(pin string) (uint16, error) {
 	_, err := conn.Write([]byte{0x04, n[pin]})
 	if err != nil {
-		fmt.Println(err)
+		return 0, err
+	}
+
+	val, err := readBytes()
+	if err != nil {
+		return 0, err
 	}
 
 	// NOTE: Didn't seem necessary to implement support for compatibility with firmata's 10-bit ADC values, as Spark-IO did.
-	return readBytes()
+	return val, nil
 }
 
-func AlwaysSendBit(pin, value string) {
+func AlwaysSendBit(pin, value string) error {
 	v := map[string]byte{
 		"DIGITAL": 1,
 		"ANALOG":  2,
@@ -205,22 +219,24 @@ func AlwaysSendBit(pin, value string) {
 
 	_, err := conn.Write([]byte{0x05, n[pin], v[value]})
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+
+	return nil
 }
 
-func ServoWrite(pin string, deg byte) {
+func ServoWrite(pin string, deg byte) error {
 	for _, p := range availablePins {
 		if p == pin {
 			_, err := conn.Write([]byte{0x41, n[pin], deg})
 			if err != nil {
-				fmt.Println(err)
+				return err
 			}
-			return
+			return nil
 		}
 	}
 
-	fmt.Printf("ServoWrite is not available on %s.\n", n[pin])
+	return errors.New(fmt.Sprintf("ServoWrite is not available on %s.\n", pin))
 }
 
 // TODO: Implement SERIAL, SPI, and WIRE actions when ready on Voodoo.
