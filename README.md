@@ -109,7 +109,7 @@ writeErr := AnalogWrite("A1", 100)
 Example:
 ```go
 err := PinMode("D1", "INPUT")
-readErr := DigitalRead("D1")
+val, readErr := DigitalRead("D1")
 ```
 
 **AnalogRead(pin)**
@@ -117,7 +117,7 @@ readErr := DigitalRead("D1")
 Example:
 ```go
 err := PinMode("A1", "ANALOG")
-readErr := AnalogRead("A1")
+val, readErr := AnalogRead("A1")
 ```
 
 **ServoWrite(pin, deg)**
