@@ -10,12 +10,41 @@ import (
 	"os"
 )
 
+var (
+	// Convert Pin number to its byte represetation.
+	n = map[string]byte{
+		"D0": 0, "A0": 0,
+		"D1": 1, "A1": 1,
+		"D2": 2, "A2": 2,
+		"D3": 3, "A3": 3,
+		"D4": 4, "A4": 4,
+		"D5": 5, "A5": 5,
+		"D6": 6, "A6": 6,
+		"D7": 7, "A7": 7,
+	}
+
+	// Available Pins for PWM and Servo writes.
+	// PWM should be written with AnalogWrite, Servo with ServoWrite.
+	availablePins = []string{
+		"A0",
+		"A1",
+		"A4",
+		"A5",
+		"A6",
+		"A7",
+		"D0",
+		"D1",
+	}
+)
+
 //
 // Get Spark IP and Ping Spark.
 //
 
-var conn *net.TCPConn
-var StaticIP string
+var (
+	conn     *net.TCPConn
+	StaticIP string
+)
 
 func PingSpark() error {
 	// Get Spark Core IP Address.
@@ -77,31 +106,6 @@ func PingSpark() error {
 //
 // PinMode and Pin Commands.
 //
-
-// Convert Pin number to its byte represetation.
-var n = map[string]byte{
-	"D0": 0, "A0": 0,
-	"D1": 1, "A1": 1,
-	"D2": 2, "A2": 2,
-	"D3": 3, "A3": 3,
-	"D4": 4, "A4": 4,
-	"D5": 5, "A5": 5,
-	"D6": 6, "A6": 6,
-	"D7": 7, "A7": 7,
-}
-
-// Available Pins for PWM and Servo writes.
-// PWM should be written with AnalogWrite, Servo with ServoWrite.
-var availablePins = []string{
-	"A0",
-	"A1",
-	"A4",
-	"A5",
-	"A6",
-	"A7",
-	"D0",
-	"D1",
-}
 
 func PinMode(pin, mode string) error {
 	m := map[string]byte{
