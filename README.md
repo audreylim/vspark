@@ -1,6 +1,6 @@
 #Vspark
 
-Vspark is a Go package that lets you write Go programs that interact with [Spark devices] (https://www.spark.io/).
+Vspark is a Go package that lets you write programs for [Spark devices] (https://www.spark.io/).
 
 ##Getting Started
 
