@@ -6,6 +6,8 @@ Vspark is a Go package that lets you write programs for [Spark devices] (https:/
 
 Load the [Voodoospark firmware] (https://github.com/voodootikigod/voodoospark) onto your Spark device. 
 
+*For users familiar with [Spark-cli] (https://github.com/spark/spark-cli), voodoospark firmware is bundled and can be flashed through the CLI.
+
 Set these environment variables on the host machine.
 
 ```go
