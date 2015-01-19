@@ -2,7 +2,6 @@ package vspark
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -62,18 +61,18 @@ func PingSpark() error {
 		client := &http.Client{}
 		req, err := http.NewRequest("GET", reqUrl, nil)
 		if err != nil {
-			return err
+			return fmt.Errorf("vspark: %s", err)
 		}
 
 		resp, requestErr := client.Do(req)
 		if requestErr != nil {
-			return requestErr
+			return fmt.Errorf("vspark: %s", requestErr)
 		}
 		defer resp.Body.Close()
 
 		body, dataReadErr := ioutil.ReadAll(resp.Body)
 		if dataReadErr != nil {
-			return dataReadErr
+			return fmt.Errorf("vspark: %s", dataReadErr)
 		}
 
 		type endpoint struct {
@@ -83,7 +82,7 @@ func PingSpark() error {
 		var r endpoint
 		err = json.Unmarshal(body, &r)
 		if err != nil {
-			return err
+			return fmt.Errorf("vspark: %s", err)
 		}
 
 		sparkIP = r.Result
@@ -92,12 +91,12 @@ func PingSpark() error {
 	// Ping Spark with TCP.
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", sparkIP)
 	if err != nil {
-		return err
+		return fmt.Errorf("vspark: %s", err)
 	}
 
 	conn, err = net.DialTCP("tcp", nil, tcpAddr)
 	if err != nil {
-		return err
+		return fmt.Errorf("vspark: %s", err)
 	}
 
 	return nil
@@ -125,18 +124,18 @@ func PinMode(pin, mode string) error {
 			if p == pin {
 				_, err := conn.Write([]byte{0x00, n[pin], m[mode]})
 				if err != nil {
-					return err
+					return fmt.Errorf("vspark: %s", err)
 				}
 				return nil
 			}
 		}
 
-		return errors.New(fmt.Sprintf("%s is not available on %s.\n", mode, pin))
+		return fmt.Errorf("vspark: %s is not available on %s.\n", mode, pin)
 	}
 
 	_, err := conn.Write([]byte{0x00, n[pin], m[mode]})
 	if err != nil {
-		return err
+		return fmt.Errorf("vspark: %s", err)
 	}
 
 	return nil
@@ -145,7 +144,7 @@ func PinMode(pin, mode string) error {
 func DigitalWrite(pin string, value byte) error {
 	_, err := conn.Write([]byte{0x01, n[pin], value})
 	if err != nil {
-		return err
+		return fmt.Errorf("vspark: %s", err)
 	}
 
 	return nil
@@ -156,13 +155,13 @@ func AnalogWrite(pin string, value byte) error {
 		if p == pin {
 			_, err := conn.Write([]byte{0x02, n[pin], value})
 			if err != nil {
-				return err
+				return fmt.Errorf("vspark: %s", err)
 			}
 			return nil
 		}
 	}
 
-	return errors.New(fmt.Sprintf("PWM is not available on %s.\n", pin))
+	return fmt.Errorf("vspark: PWM is not available on %s.\n", pin)
 }
 
 // Read bytes sent by Voodoo.
@@ -223,7 +222,7 @@ func AlwaysSendBit(pin, value string) error {
 
 	_, err := conn.Write([]byte{0x05, n[pin], v[value]})
 	if err != nil {
-		return err
+		return fmt.Errorf("vspark: %s", err)
 	}
 
 	return nil
@@ -234,13 +233,13 @@ func ServoWrite(pin string, deg byte) error {
 		if p == pin {
 			_, err := conn.Write([]byte{0x41, n[pin], deg})
 			if err != nil {
-				return err
+				return fmt.Errorf("vspark: %s", err)
 			}
 			return nil
 		}
 	}
 
-	return errors.New(fmt.Sprintf("ServoWrite is not available on %s.\n", pin))
+	return fmt.Errorf("vspark: ServoWrite is not available on %s.\n", pin)
 }
 
 // TODO: Implement SERIAL, SPI, and WIRE actions when ready on Voodoo.
